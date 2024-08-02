@@ -3,17 +3,16 @@ import React from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 
 type FormRegisterSchema = {
-    username: string
     email: string
     password: string
 
 }
 
-const RegisterPopup: React.FC = () => {
+const LoginPopup: React.FC = () => {
     const { register, handleSubmit } = useForm<FormRegisterSchema>()
     const onSubmit: SubmitHandler<FormRegisterSchema> = async (data) => {
         try {
-            const response = await fetch(`http://demo`, {
+            const response = await fetch(`/api/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -34,9 +33,8 @@ const RegisterPopup: React.FC = () => {
 
     return (
         <section className="w-96 h-48 border-2 rounded-lg bg-white pb-2 pt-2 m-8">
-            <h1 className="flex justify-center pb-2 text-black">User Registration</h1>
+            <h1 className="flex justify-center pb-2 text-black">User Login</h1>
             <form method="post" className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-                <input className="bg-transparent outline-none text-black px-6" type="text" placeholder="Name" {...register("username")} />
                 <input className="bg-transparent outline-none text-black px-6" type="email" placeholder="Email" {...register("email")} />
                 <input className="bg-transparent outline-none text-black px-6" type="password" placeholder="Password" {...register("password")} />
                 <button className="text-black" type="submit">Submit</button>
@@ -45,4 +43,4 @@ const RegisterPopup: React.FC = () => {
     );
 };
 
-export default RegisterPopup;
+export default LoginPopup;
