@@ -3,7 +3,7 @@ import React from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 
 type FormRegisterSchema = {
-    username: string
+    name: string
     email: string
     password: string
 
@@ -36,7 +36,7 @@ const RegisterPopup: React.FC = () => {
         <section className="w-96 h-48 border-2 rounded-lg bg-white pb-2 pt-2 m-8">
             <h1 className="flex justify-center pb-2 text-black">User Registration</h1>
             <form method="post" className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-                <input className="bg-transparent outline-none text-black px-6" type="text" placeholder="Name" {...register("username")} />
+                <input className="bg-transparent outline-none text-black px-6" type="text" placeholder="Name" {...register("name")} />
                 <input className="bg-transparent outline-none text-black px-6" type="email" placeholder="Email" {...register("email")} />
                 <input className="bg-transparent outline-none text-black px-6" type="password" placeholder="Password" {...register("password")} />
                 <button className="text-black" type="submit">Submit</button>
