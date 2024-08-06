@@ -1,9 +1,26 @@
 "use client";
 
 import { signIn, signOut, useSession } from 'next-auth/react';
+import { useAuth } from '../context/AuthContext';
 
-export default function Navbar() {
+interface AuthButtonsProps {
+    showRegisterPopup: boolean;
+    setShowRegisterPopup: React.Dispatch<React.SetStateAction<boolean>>;
+    showLoginPopup: boolean;
+    setShowLoginPopup: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Navbar: React.FC<AuthButtonsProps> = ({ showRegisterPopup, setShowRegisterPopup, showLoginPopup, setShowLoginPopup }) => {
     const { data: session, status } = useSession();
+    const { isLoggedIn, user, logout } = useAuth();
+
+    const handleLogout = () => {
+        setShowLoginPopup(false);
+        setShowRegisterPopup(false);
+        logout();
+        signOut();
+    };
+
 
     console.log("Session:", session);
     console.log("Status:", status);
@@ -14,15 +31,39 @@ export default function Navbar() {
                 <a href="/">Home</a>
                 {/* Add other navigation links here */}
             </div>
-            <div>
+            <div className='flex gap-4'>
                 {status === 'loading' ? (
                     <p>Loading...</p>
-                ) : !session ? (
-                    <button onClick={() => signIn('google')}>Sign in with Google</button>
+                ) : session ? (
+                    <>
+                        <p>Welcome, {session.user?.name || 'User'}!</p>
+                        <button onClick={handleLogout}>Sign out</button>
+                    </>
+                ) : isLoggedIn ? (
+                    <>
+                        <p>Welcome, {user?.name || 'User'}!</p>
+                        <button onClick={handleLogout}>Logout</button>
+                    </>
                 ) : (
-                    <button onClick={() => signOut()}>Sign out</button>
+                    <>
+                        {!showLoginPopup && !showRegisterPopup && (
+                            <button onClick={() => setShowRegisterPopup(true)}>
+                                Register
+                            </button>
+                        )}
+                        {!showLoginPopup && !showRegisterPopup && (
+                            <button onClick={() => setShowLoginPopup(true)}>
+                                Login
+                            </button>
+                        )}
+                        {!showLoginPopup && !showRegisterPopup && (
+                            <button onClick={() => signIn('google')}>Sign in with Google</button>
+                        )}
+                    </>
                 )}
             </div>
         </nav>
     );
 }
+
+export default Navbar;
