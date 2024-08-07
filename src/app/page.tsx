@@ -15,8 +15,8 @@ export default function Home() {
         setShowLoginPopup={setShowLoginPopup}></Navbar>
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
         <div className='flex flex-col justify-center'>
-          {showRegisterPopup && <RegisterPopup />}
-          {showLoginPopup && <LoginPopup />}
+          {showRegisterPopup && <RegisterPopup onClose={() => setShowRegisterPopup(false)} />}
+          {showLoginPopup && <LoginPopup onClose={() => setShowLoginPopup(false)} />}
         </div>
 
       </main>

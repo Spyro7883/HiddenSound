@@ -15,8 +15,6 @@ const Navbar: React.FC<AuthButtonsProps> = ({ showRegisterPopup, setShowRegister
     const { isLoggedIn, user, logout } = useAuth();
 
     const handleLogout = () => {
-        setShowLoginPopup(false);
-        setShowRegisterPopup(false);
         logout();
         signOut();
     };
@@ -46,19 +44,9 @@ const Navbar: React.FC<AuthButtonsProps> = ({ showRegisterPopup, setShowRegister
                     </>
                 ) : (
                     <>
-                        {!showLoginPopup && !showRegisterPopup && (
-                            <button onClick={() => setShowRegisterPopup(true)}>
-                                Register
-                            </button>
-                        )}
-                        {!showLoginPopup && !showRegisterPopup && (
-                            <button onClick={() => setShowLoginPopup(true)}>
-                                Login
-                            </button>
-                        )}
-                        {!showLoginPopup && !showRegisterPopup && (
-                            <button onClick={() => signIn('google')}>Sign in with Google</button>
-                        )}
+                        <button onClick={() => setShowRegisterPopup(true)}>Register</button>
+                        <button onClick={() => setShowLoginPopup(true)}>Login</button>
+                        <button onClick={() => signIn('google')}>Sign in with Google</button>
                     </>
                 )}
             </div>
