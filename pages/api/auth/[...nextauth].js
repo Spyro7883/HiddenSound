@@ -16,11 +16,13 @@ export default NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-    async session({ session, token, user }) {
+
+    async session({ session, token }) {
       session.user.id = token.id;
       return session;
     },
-    async jwt({ token, user, account }) {
+
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
       }
@@ -42,6 +44,29 @@ export default NextAuth({
             email: user.email,
             name: user.name,
             image: user.image,
+          },
+        });
+      }
+
+      const accountExists = await prisma.account.findUnique({
+        where: {
+          provider_providerAccountId: {
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+          },
+        },
+      });
+
+      if (!accountExists) {
+        await prisma.account.create({
+          data: {
+            userId: user.id,
+            type: account.type,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            accessToken: account.accessToken,
+            refreshToken: account.refreshToken,
+            accessTokenExpires: account.accessTokenExpires ? new Date(account.accessTokenExpires) : null,
           },
         });
       }
