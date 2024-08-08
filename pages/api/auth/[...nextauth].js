@@ -16,13 +16,11 @@ export default NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-
-    async session({ session, token }) {
+    async session({ session, token, user }) {
       session.user.id = token.id;
       return session;
     },
-
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
       }
@@ -34,12 +32,12 @@ export default NextAuth({
       console.log('Account:', account);
       console.log('Profile:', profile);
 
-      const existingUser = await prisma.user.findUnique({
+      let existingUser = await prisma.user.findUnique({
         where: { email: user.email },
       });
 
       if (!existingUser) {
-        await prisma.user.create({
+        existingUser = await prisma.user.create({
           data: {
             email: user.email,
             name: user.name,
@@ -60,7 +58,7 @@ export default NextAuth({
       if (!accountExists) {
         await prisma.account.create({
           data: {
-            userId: user.id,
+            userId: existingUser.id, // Ensure this userId is valid
             type: account.type,
             provider: account.provider,
             providerAccountId: account.providerAccountId,
@@ -73,6 +71,5 @@ export default NextAuth({
 
       return true;
     },
-  },
-  debug: true,
+  }
 });
