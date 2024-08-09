@@ -37,7 +37,17 @@ export default async function register(
           },
         });
 
-        res.status(201).json(newUser);
+        // Create an account entry for the 'credentials' provider
+        const newAccount = await prisma.account.create({
+          data: {
+            userId: newUser.id,
+            type: "credentials",
+            provider: "credentials",
+            providerAccountId: newUser.email, // Using email as the unique identifier
+          },
+        });
+
+        res.status(201).json({ user: newUser, account: newAccount });
       } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Internal Server Error" });
