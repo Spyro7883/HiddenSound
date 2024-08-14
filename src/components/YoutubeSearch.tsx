@@ -1,5 +1,6 @@
 require('dotenv').config();
 import React, { useState } from 'react';
+import PlaylistModal from './PlaylistModal';
 
 interface YouTubeSearchProps {
     onVideoSelect: (videoId: string) => void;
@@ -8,6 +9,7 @@ interface YouTubeSearchProps {
 const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
     const [query, setQuery] = useState<string>('');
     const [results, setResults] = useState<Array<{ id: string, title: string }>>([]);
+    const [showPlaylistModal, setShowPlaylistModal] = useState(false);
 
     console.log(process.env.REACT_APP_YOUTUBE_API);
 
@@ -73,6 +75,10 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
                     </div>
                 ))}
             </div>
+            <button className='pt-4' onClick={() => setShowPlaylistModal(true)}>Create playlist</button>
+            {showPlaylistModal && (
+                <PlaylistModal onClose={() => setShowPlaylistModal(false)} />
+            )}
         </div>
     );
 };
