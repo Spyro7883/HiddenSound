@@ -1,5 +1,5 @@
 require('dotenv').config();
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PlaylistModal from './PlaylistModal';
 
 interface YouTubeSearchProps {
@@ -10,13 +10,25 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
     const [query, setQuery] = useState<string>('');
     const [results, setResults] = useState<Array<{ id: string, title: string }>>([]);
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
+    const [accountId, setAccountId] = useState<string | null>(null);
 
-    console.log(process.env.REACT_APP_YOUTUBE_API);
+    useEffect(() => {
+        const fetchAccountId = async () => {
+            try {
+                const response = await fetch('/api/getAccountId');
+                const data = await response.json();
+                setAccountId(data.accountId);
+            } catch (error) {
+                console.error('Error fetching account ID:', error);
+            }
+        };
+
+        fetchAccountId();
+    }, []);
 
     const searchYouTube = async () => {
-        const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API; // Ensure this is set correctly
+        const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API;
 
-        // First clear previous results
         setResults([]);
 
         try {
@@ -76,8 +88,8 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
                 ))}
             </div>
             <button className='pt-4' onClick={() => setShowPlaylistModal(true)}>Create playlist</button>
-            {showPlaylistModal && (
-                <PlaylistModal onClose={() => setShowPlaylistModal(false)} />
+            {showPlaylistModal && accountId && (
+                <PlaylistModal accountId={accountId} onClose={() => setShowPlaylistModal(false)} />
             )}
         </div>
     );

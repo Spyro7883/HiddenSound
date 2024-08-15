@@ -40,6 +40,7 @@ model Account {
   updatedAt         DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playlists  Playlist[]
 
   @@unique([provider, providerAccountId])
 }
@@ -53,4 +54,14 @@ model Session {
   updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Playlist {
+  id        String   @id @default(cuid())
+  name      String
+  videoIds  String[]
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
