@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 
 interface YouTubePlayerProps {
   videoId: string;
+  onEnd?: () => void;
 }
 
-const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId }) => {
+const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onEnd }) => {
   const playerRef = useRef<HTMLDivElement | null>(null);
   const [player, setPlayer] = useState<YT.Player | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -47,6 +48,9 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId }) => {
               ) {
                 setIsPlaying(false);
               }
+              if (event.data === window.YT.PlayerState.ENDED && onEnd) {
+                onEnd();
+              }
             },
           },
         });
@@ -74,7 +78,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId }) => {
         playerRef.current.innerHTML = "";
       }
     };
-  }, [videoId, volume]);
+  }, [videoId, volume, onEnd]);
 
   // Effect to update currentTime every second while the video is playing
   useEffect(() => {

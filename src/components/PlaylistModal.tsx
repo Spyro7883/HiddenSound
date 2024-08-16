@@ -12,7 +12,7 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({ onClose, accountId }) => 
     useEffect(() => {
         const fetchPlaylists = async () => {
             try {
-                const response = await fetch(`/api/playlists/getPlaylitsts?accountId=${accountId}`);
+                const response = await fetch(`/api/playlists/getAllPlaylists?accountId=${accountId}`);
                 const data = await response.json();
                 setPlaylists(data);
             } catch (error) {
@@ -42,6 +42,7 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({ onClose, accountId }) => 
                 const newPlaylist = await response.json();
                 setPlaylists([...playlists, newPlaylist]);
                 setPlaylistName('');
+                console.log('Playlist created successfully');
             } else {
                 const errorData = await response.json();
                 console.log(errorData.error || 'Failed to create playlist');

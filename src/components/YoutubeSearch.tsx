@@ -9,8 +9,11 @@ interface YouTubeSearchProps {
 const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
     const [query, setQuery] = useState<string>('');
     const [results, setResults] = useState<Array<{ id: string, title: string }>>([]);
+    const [playlists, setPlaylists] = useState<Array<{ id: string, name: string }>>([]);
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
     const [accountId, setAccountId] = useState<string | null>(null);
+    const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
+    const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchAccountId = async () => {
@@ -18,8 +21,14 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
                 const response = await fetch('/api/getAccountId');
                 const data = await response.json();
                 setAccountId(data.accountId);
+
+                if (data.accountId) {
+                    const playlistsResponse = await fetch(`/api/playlists/getAllPlaylists?accountId=${data.accountId}`);
+                    const playlistsData = await playlistsResponse.json();
+                    setPlaylists(playlistsData);
+                }
             } catch (error) {
-                console.error('Error fetching account ID:', error);
+                console.error('Error fetching account ID or playlists:', error);
             }
         };
 
@@ -55,8 +64,58 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
     };
 
     const handleVideoSelect = (videoId: string) => {
+        setSelectedVideoId(videoId);
         onVideoSelect(videoId);
-        setResults([]); // Clear search results after selecting a video
+        setResults([]);
+    };
+
+    const handleAddToPlaylist = async () => {
+        if (!selectedPlaylistId || !selectedVideoId) {
+            alert('Please select a playlist and a song');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/playlists/addSong', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ playlistId: selectedPlaylistId, videoId: selectedVideoId }),
+            });
+
+            if (response.ok) {
+                alert('Song added to playlist successfully');
+                setSelectedVideoId(null); // Clear the selection
+            } else {
+                const errorData = await response.json();
+                alert(errorData.error || 'Failed to add song to playlist');
+            }
+        } catch (error) {
+            console.error('Error adding song to playlist:', error);
+        }
+    };
+
+    const removeSongFromPlaylist = async (playlistId: string, videoId: string) => {
+        try {
+            const response = await fetch('/api/playlists/removeSong', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ playlistId, videoId }),
+            });
+
+            if (response.ok) {
+                alert('Song removed from playlist successfully');
+
+            } else {
+                const errorData = await response.json();
+                alert(errorData.error || 'Failed to remove song from playlist');
+            }
+        } catch (error) {
+            console.error('Error removing song from playlist:', error);
+        }
     };
 
     return (
@@ -87,7 +146,41 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
                     </div>
                 ))}
             </div>
-            <button className='pt-4' onClick={() => setShowPlaylistModal(true)}>Create playlist</button>
+            {selectedVideoId && playlists.length > 0 && (
+                <div className="mt-4">
+                    <h3>Select a Playlist:</h3>
+                    <select
+                        value={selectedPlaylistId || ''}
+                        onChange={(e) => setSelectedPlaylistId(e.target.value)}
+                        className="p-2 bg-gray-700 text-white rounded-md"
+                    >
+                        <option value="" disabled>Select a playlist</option>
+                        {playlists.map((playlist) => (
+                            <option key={playlist.id} value={playlist.id}>
+                                {playlist.name}
+                            </option>
+                        ))}
+                    </select>
+                    <button
+                        onClick={handleAddToPlaylist}
+                        className="ml-2 bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded"
+                    >
+                        Add to Playlist
+                    </button>
+                    {selectedPlaylistId && selectedVideoId && (
+                        <button
+                            onClick={() => removeSongFromPlaylist(selectedPlaylistId, selectedVideoId)}
+                            className="ml-2 bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded"
+                        >
+                            Remove Song
+                        </button>
+                    )}
+
+
+                </div>
+            )}
+
+            <button className="pt-4" onClick={() => setShowPlaylistModal(true)}>Create playlist</button>
             {showPlaylistModal && accountId && (
                 <PlaylistModal accountId={accountId} onClose={() => setShowPlaylistModal(false)} />
             )}
