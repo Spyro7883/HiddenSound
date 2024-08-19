@@ -5,15 +5,17 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { accountId } = req.query;
+  const { userId } = req.query;
 
-  if (!accountId || typeof accountId !== "string") {
-    return res.status(400).json({ error: "Account ID is required" });
+  if (!userId || typeof userId !== "string") {
+    return res.status(400).json({ error: "User ID is required" });
   }
 
   try {
     const playlists = await prisma.playlist.findMany({
-      where: { accountId },
+      where: {
+        userId: userId,
+      },
       select: {
         id: true,
         name: true,
@@ -21,6 +23,7 @@ export default async function handle(
     });
     res.status(200).json(playlists);
   } catch (error) {
+    console.error("Failed to fetch playlists:", error);
     res.status(500).json({ error: "Failed to fetch playlists" });
   }
 }

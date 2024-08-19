@@ -6,22 +6,28 @@ export default async function handle(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { name, accountId } = req.body;
+    const { name, userId } = req.body;
 
-    if (!name || !accountId) {
-      return res.status(400).json({ error: "Name and accountId are required" });
+    console.log("Received request to create playlist with:", { name, userId });
+
+    if (!name || !userId) {
+      console.log("Validation failed: Name and userId are required");
+      return res.status(400).json({ error: "Name and userId are required" });
     }
 
     try {
       const playlist = await prisma.playlist.create({
         data: {
           name,
-          accountId,
+          userId,
           videoIds: [],
         },
       });
+
+      console.log("Playlist created successfully:", playlist);
       return res.status(200).json(playlist);
     } catch (error) {
+      console.error("Error creating playlist:", error);
       return res.status(500).json({ error: "Error creating playlist" });
     }
   } else {

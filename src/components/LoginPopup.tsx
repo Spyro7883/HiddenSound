@@ -29,7 +29,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ onClose }) => {
             if (response.ok) {
                 const responseData = await response.json();
                 console.log(responseData);
-                login({ name: responseData.name }); // Update the login state using the context
+                login({ id: responseData.id, name: responseData.name });
                 onClose();
             } else {
                 const errorText = await response.text();

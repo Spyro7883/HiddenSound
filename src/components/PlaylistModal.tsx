@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 
 interface PlaylistModalProps {
     onClose: () => void;
-    accountId: string;
+    userId: string;
 }
 
-const PlaylistModal: React.FC<PlaylistModalProps> = ({ onClose, accountId }) => {
+const PlaylistModal: React.FC<PlaylistModalProps> = ({ onClose, userId }) => {
     const [playlistName, setPlaylistName] = useState('');
     const [playlists, setPlaylists] = useState<Array<{ id: string, name: string }>>([]);
 
     useEffect(() => {
         const fetchPlaylists = async () => {
             try {
-                const response = await fetch(`/api/playlists/getAllPlaylists?accountId=${accountId}`);
+                const response = await fetch(`/api/playlists/getAllPlaylists?userId=${userId}`);
                 const data = await response.json();
                 setPlaylists(data);
             } catch (error) {
@@ -21,7 +21,7 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({ onClose, accountId }) => 
         };
 
         fetchPlaylists();
-    }, [accountId]);
+    }, [userId]);
 
     const createPlaylist = async () => {
         if (!playlistName.trim()) {
@@ -35,7 +35,7 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({ onClose, accountId }) => 
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: playlistName, accountId }),
+                body: JSON.stringify({ name: playlistName, userId }),
             });
 
             if (response.ok) {
@@ -93,7 +93,6 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({ onClose, accountId }) => 
                     Create Playlist
                 </button>
 
-                {/* Display the existing playlists */}
                 <div className="mt-4">
                     <h3>Your Playlists:</h3>
                     <ul>

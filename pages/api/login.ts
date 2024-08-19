@@ -15,9 +15,6 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
       // Fetch user by email
       const user = await prisma.user.findUnique({
         where: { email },
-        include: {
-          accounts: true, // Include accounts related to this user
-        },
       });
 
       if (!user) {
@@ -25,23 +22,26 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
         return;
       }
 
-      // Check if the user has an account with a password (i.e., non-OAuth user)
-      if (user.password) {
-        // Compare passwords
-        const passwordMatch = await bcrypt.compare(password, user.password);
-
-        if (!passwordMatch) {
-          res.status(401).json({ error: "Invalid password" });
-          return;
-        }
-
-        res.status(200).json({ message: "Login successful", name: user.name });
-      } else {
-        // User doesn't have a password set, possibly an OAuth-only user
+      // Check if the user has a password (non-OAuth user)
+      if (!user.password) {
         res.status(401).json({
-          error: "Invalid login method. Please use your OAuth provider.",
+          error:
+            "No password set for this account. Please use your OAuth provider.",
         });
+        return;
       }
+
+      // Compare passwords
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        res.status(401).json({ error: "Invalid password" });
+        return;
+      }
+
+      // Respond with user information (e.g., id and name)
+      res
+        .status(200)
+        .json({ message: "Login successful", id: user.id, name: user.name });
     } catch (err) {
       console.error("Database error:", err);
       res.status(500).json({ error: "Internal Server Error" });

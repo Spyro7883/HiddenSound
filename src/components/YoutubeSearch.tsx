@@ -11,28 +11,28 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
     const [results, setResults] = useState<Array<{ id: string, title: string }>>([]);
     const [playlists, setPlaylists] = useState<Array<{ id: string, name: string }>>([]);
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
-    const [accountId, setAccountId] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
     const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
     const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchAccountId = async () => {
+        const fetchUserId = async () => {
             try {
-                const response = await fetch('/api/getAccountId');
+                const response = await fetch('/api/getUserId');
                 const data = await response.json();
-                setAccountId(data.accountId);
+                setUserId(data.userId);
 
-                if (data.accountId) {
-                    const playlistsResponse = await fetch(`/api/playlists/getAllPlaylists?accountId=${data.accountId}`);
+                if (data.userId) {
+                    const playlistsResponse = await fetch(`/api/playlists/getAllPlaylists?userId=${data.userId}`);
                     const playlistsData = await playlistsResponse.json();
                     setPlaylists(playlistsData);
                 }
             } catch (error) {
-                console.error('Error fetching account ID or playlists:', error);
+                console.error('Error fetching user ID or playlists:', error);
             }
         };
 
-        fetchAccountId();
+        fetchUserId();
     }, []);
 
     const searchYouTube = async () => {
@@ -180,9 +180,12 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
                 </div>
             )}
 
-            <button className="pt-4" onClick={() => setShowPlaylistModal(true)}>Create playlist</button>
-            {showPlaylistModal && accountId && (
-                <PlaylistModal accountId={accountId} onClose={() => setShowPlaylistModal(false)} />
+            <button className="pt-4" onClick={() => setShowPlaylistModal(true)}>
+                Create playlist
+            </button>
+
+            {showPlaylistModal && userId && (
+                <PlaylistModal userId={userId} onClose={() => setShowPlaylistModal(false)} />
             )}
         </div>
     );

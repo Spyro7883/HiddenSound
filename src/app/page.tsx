@@ -16,30 +16,29 @@ export default function Home() {
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
   const [videoId, setVideoId] = useState<string | null>(null);
   const [playlists, setPlaylists] = useState<Array<{ id: string, name: string }>>([]);
-  const [accountId, setAccountId] = useState<string | null>(null);
 
   const { data: session, } = useSession();
   const { isLoggedIn } = useAuth();
 
   useEffect(() => {
-    const fetchAccountIdAndPlaylists = async () => {
+    const fetchUserIdAndPlaylists = async () => {
       try {
-        const accountIdResponse = await fetch('/api/getAccountId');
-        const accountIdData = await accountIdResponse.json();
-        setAccountId(accountIdData.accountId);
+        const userIdResponse = await fetch('/api/getUserId');
+        const userIdData = await userIdResponse.json();
+        const userId = userIdData.userId;
 
-        if (accountIdData.accountId) {
-          const playlistsResponse = await fetch(`/api/playlists/getAllPlaylists?accountId=${accountIdData.accountId}`);
+        if (userId) {
+          const playlistsResponse = await fetch(`/api/playlists/getAllPlaylists?userId=${userId}`);
           const playlistsData = await playlistsResponse.json();
           setPlaylists(playlistsData);
         }
       } catch (error) {
-        console.error('Error fetching account ID or playlists:', error);
+        console.error('Error fetching user ID or playlists:', error);
       }
     };
 
     if (session || isLoggedIn) {
-      fetchAccountIdAndPlaylists();
+      fetchUserIdAndPlaylists();
     }
   }, [session, isLoggedIn]);
 

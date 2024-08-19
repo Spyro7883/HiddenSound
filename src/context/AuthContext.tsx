@@ -1,10 +1,15 @@
 "use client";
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
+interface User {
+    id: string;
+    name: string;
+}
+
 interface AuthContextProps {
     isLoggedIn: boolean;
-    user: { name: string } | null;
-    login: (user: { name: string }) => void;
+    user: User | null;
+    login: (user: User) => void;
     logout: () => void;
 }
 
@@ -12,7 +17,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState<{ name: string } | null>(null);
+    const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
         // Check localStorage to see if the user is logged in and retrieve user info
@@ -22,11 +27,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(storedUser ? JSON.parse(storedUser) : null);
     }, []);
 
-    const login = (user: { name: string }) => {
+    const login = (user: User) => {
         setIsLoggedIn(true);
         setUser(user);
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('user', JSON.stringify(user));
+
+        // Set userId in a cookie for server-side access
+        document.cookie = `userId=${user.id}; path=/; SameSite=Lax; Secure`;
     };
 
     const logout = () => {
@@ -34,6 +42,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('user');
+
+        // Clear the userId cookie
+        document.cookie = 'userId=; Max-Age=0; path=/;';
     };
 
     return (
