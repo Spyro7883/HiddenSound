@@ -119,24 +119,24 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
     };
 
     return (
-        <div>
+        <div className="xss:flex xss:flex-col xs:block">
             <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search for a song"
-                className="w-3/5 p-2 text-base rounded border border-gray-300 mr-2 bg-white text-black"
+                className="xss:w-full xs:w-3/5 min-w-40 xss:block xss:mx-auto xss:mb-2 xs:inline xs:mr-2 xs:mb-0 p-2 text-base rounded border border-gray-300 mr-2 bg-white text-black"
             />
             <button
                 onClick={handleSearch}
-                className="px-5 py-2 text-base rounded bg-blue-500 text-white border-none cursor-pointer"
+                className="xss:w-3/5 xss:min-w-30 xs:min-w-0 xs:w-auto px-5 py-2 mx-auto text-base rounded bg-blue-500 text-white border-none cursor-pointer"
             >
                 Search
             </button>
 
             <div>
                 {results.map((video) => (
-                    <div key={video.id} style={{ margin: '10px 0' }}>
+                    <div key={video.id} className="my-2">
                         <button
                             onClick={() => handleVideoSelect(video.id)}
                             className="block text-left p-2 w-full border border-gray-300"

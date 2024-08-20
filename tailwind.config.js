@@ -10,6 +10,10 @@ module.exports = {
       height: {
         '90svh': '90svh',
       },
+      screens: {
+        'xss': '160px',
+        'xs': '420px',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

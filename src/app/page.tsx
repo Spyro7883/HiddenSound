@@ -89,7 +89,7 @@ export default function Home() {
             videoId && <YouTubePlayer videoId={videoId} />
           )
         ) : (
-          <p>Please log in to use our hidden music player.</p>
+          <p className='d-flex justify-center text-center'>Please log in to use our hidden music player.</p>
         )}
       </main>
     </div>

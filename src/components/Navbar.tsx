@@ -24,29 +24,29 @@ const Navbar: React.FC<AuthButtonsProps> = ({ showRegisterPopup, setShowRegister
     console.log("Status:", status);
 
     return (
-        <nav style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+        <nav className="p-4 flex justify-between gap-4">
             <div>
                 <a href="/">Home</a>
-                {/* Add other navigation links here */}
             </div>
-            <div className='flex gap-4'>
+            <div className='flex justify-end gap-4 flex-wrap'>
                 {status === 'loading' ? (
                     <p>Loading...</p>
                 ) : session ? (
                     <>
-                        <p>Welcome, {session.user?.name || 'User'}!</p>
-                        <button onClick={handleLogout}>Sign out</button>
+
+                        <div className='flex gap-1 text-end'><p className="xss:hidden xs:block">Welcome,</p> <p>{session.user?.name || 'User'}!</p></div>
+                        <button className='flex justify-end' onClick={handleLogout}>Sign out</button>
                     </>
                 ) : isLoggedIn ? (
                     <>
-                        <p>Welcome, {user?.name || 'User'}!</p>
-                        <button onClick={handleLogout}>Logout</button>
+                        <div className='flex gap-1 text-end'><p className="xss:hidden xs:block">Welcome,</p> <p>{user?.name || 'User'}!</p></div>
+                        <button className='flex justify-end' onClick={handleLogout}>Logout</button>
                     </>
                 ) : (
                     <>
-                        <button onClick={() => setShowRegisterPopup(true)}>Register</button>
-                        <button onClick={() => setShowLoginPopup(true)}>Login</button>
-                        <button onClick={() => signIn('google')}>Sign in with Google</button>
+                        <button className='text-end' onClick={() => setShowRegisterPopup(true)}>Register</button>
+                        <button className='text-end' onClick={() => setShowLoginPopup(true)}>Login</button>
+                        <button className='text-end' onClick={() => signIn('google')}>Sign in with Google</button>
                     </>
                 )}
             </div>
