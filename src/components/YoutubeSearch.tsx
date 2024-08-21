@@ -147,7 +147,7 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
                 ))}
             </div>
             {selectedVideoId && playlists.length > 0 && (
-                <div className="mt-4">
+                <div className="mt-4 xss:flex xss:flex-col xss:gap-2 xss:text-center xs:block xs:text-start">
                     <h3>Select a Playlist:</h3>
                     <select
                         value={selectedPlaylistId || ''}
@@ -163,7 +163,7 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
                     </select>
                     <button
                         onClick={handleAddToPlaylist}
-                        className="ml-2 bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded"
+                        className="xss:ml-0 xs:ml-2 bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded"
                     >
                         Add to Playlist
                     </button>
@@ -181,7 +181,7 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
             )}
 
             <button className="pt-4" onClick={() => setShowPlaylistModal(true)}>
-                Create playlist
+                Pick a playlist
             </button>
 
             {showPlaylistModal && userId && (

@@ -143,13 +143,12 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onEnd }) => {
   };
 
   return (
-    <section className="flex items-center p-4 mt-8 gap-8 bg-slate-600 rounded-2xl">
+    <section className="flex xss:flex-col xs:flex-row items-center p-4 mt-8 gap-8 bg-slate-600 rounded-2xl">
       <div id="player" ref={playerRef} className="absolute"></div>
-      {/* Display the thumbnail */}
       <img
         src={thumbnailUrl}
         alt="Video Thumbnail"
-        className="w-full max-w-[120px] mb-2 rounded-lg"
+        className="w-full max-w-[120px] xss:m-0 xs:mb-2 rounded-lg"
       />
 
       <div>
@@ -159,8 +158,6 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onEnd }) => {
           </button>
           <button onClick={handleStop}>Stop</button>
         </div>
-
-        {/* Volume control slider */}
         <div>
           <div>Volume: {volume}%</div>
           <input
@@ -172,8 +169,6 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onEnd }) => {
             className="w-full"
           />
         </div>
-
-        {/* Seek bar */}
         <div>
           <div>
             {Math.floor(currentTime)} / {Math.floor(duration)} seconds

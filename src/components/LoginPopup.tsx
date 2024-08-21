@@ -42,7 +42,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ onClose }) => {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <section className="relative flex flex-col space-evenly w-96 h-48 border-2 rounded-lg bg-white pb-2 pt-2 m-8 inset-0">
+            <section className="relative flex flex-col space-evenly w-96 min-w-48 h-48 border-2 rounded-lg bg-white pb-2 pt-2 m-8 inset-0">
                 <button onClick={onClose} className="absolute top-2 right-2">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

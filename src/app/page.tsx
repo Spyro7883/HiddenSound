@@ -68,7 +68,7 @@ export default function Home() {
         ) : (
           <div>
             <YouTubeSearch onVideoSelect={handleVideoSelect} />
-            <div className="mt-4">
+            <div className="mt-4 xss:text-center xs:text-start">
               <h2>Select a Playlist to Play:</h2>
               <ul>
                 {playlists.map((playlist) => (
