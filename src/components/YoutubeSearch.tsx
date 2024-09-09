@@ -1,6 +1,7 @@
 require('dotenv').config();
 import React, { useState, useEffect } from 'react';
 import PlaylistModal from './PlaylistModal';
+import { Button } from "@/components/ui/button"
 
 interface YouTubeSearchProps {
     onVideoSelect: (videoId: string) => void;
@@ -127,12 +128,12 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
                 placeholder="Search for a song"
                 className="xss:w-full xs:w-3/5 min-w-40 xss:block xss:mx-auto xss:mb-2 xs:inline xs:mr-2 xs:mb-0 p-2 text-base rounded border border-gray-300 mr-2 bg-white text-black"
             />
-            <button
+            <Button
                 onClick={handleSearch}
                 className="xss:w-3/5 xss:min-w-30 xs:min-w-0 xs:w-auto px-5 py-2 mx-auto text-base rounded bg-blue-500 text-white border-none cursor-pointer"
             >
                 Search
-            </button>
+            </Button>
 
             <div>
                 {results.map((video) => (
