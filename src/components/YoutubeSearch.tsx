@@ -2,6 +2,8 @@ require('dotenv').config();
 import React, { useState, useEffect } from 'react';
 import PlaylistModal from './PlaylistModal';
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 
 interface YouTubeSearchProps {
     onVideoSelect: (videoId: string) => void;
@@ -121,31 +123,39 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
 
     return (
         <div className="xss:flex xss:flex-col xs:block">
-            <input
-                type="text"
+            <Input
+                type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for a song"
-                className="xss:w-full xs:w-3/5 min-w-40 xss:block xss:mx-auto xss:mb-2 xs:inline xs:mr-2 xs:mb-0 p-2 text-base rounded border border-gray-300 mr-2 bg-white text-black"
+                placeholder="Search"
+                className="xss:w-full xs:w-3/5 xss:block xss:mx-auto xss:mb-2 xs:inline xs:mr-2 xs:mb-0 p-2 mr-2"
             />
             <Button
                 onClick={handleSearch}
-                className="xss:w-3/5 xss:min-w-30 xs:min-w-0 xs:w-auto px-5 py-2 mx-auto text-base rounded bg-blue-500 text-white border-none cursor-pointer"
+                // className="xss:w-3/5 xss:min-w-30 xs:min-w-0 xs:w-auto px-5 py-2 mx-auto text-base rounded border-none"
+                className="px-5 py-2 mx-auto"
             >
                 Search
             </Button>
 
             <div>
+
                 {results.map((video) => (
-                    <div key={video.id} className="my-2">
-                        <button
+                    <Card key={video.id} className="my-2">
+                        <CardContent className="p-4 hover:bg-accent cursor-pointer"
                             onClick={() => handleVideoSelect(video.id)}
-                            className="block text-left p-2 w-full border border-gray-300"
-                        >
-                            {video.title}
-                        </button>
-                    </div>
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    handleVideoSelect(video.id);
+                                }
+                            }}
+                            aria-label={`Select video: ${video.title}`}>
+                            <CardTitle className="font-normal">{video.title}</CardTitle>
+                        </CardContent>
+                    </Card>
                 ))}
+
             </div>
             {selectedVideoId && playlists.length > 0 && (
                 <div className="mt-4 xss:flex xss:flex-col xss:gap-2 xss:text-center xs:block xs:text-start">
@@ -181,9 +191,9 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
                 </div>
             )}
 
-            <button className="pt-4" onClick={() => setShowPlaylistModal(true)}>
+            <Button className='mt-4' onClick={() => setShowPlaylistModal(true)}>
                 Pick a playlist
-            </button>
+            </Button>
 
             {showPlaylistModal && userId && (
                 <PlaylistModal userId={userId} onClose={() => setShowPlaylistModal(false)} />

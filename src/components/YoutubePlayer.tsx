@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import { Button } from "./ui/button";
+import { Slider } from "@/components/ui/slider"
 
 interface YouTubePlayerProps {
   videoId: string;
@@ -126,16 +129,16 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onEnd }) => {
     }
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = Number(e.target.value);
+  const handleVolumeChange = (value: number[]) => {
+    const newVolume = value[0];
     setVolume(newVolume);
     if (player) {
       player.setVolume(newVolume);
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const seekToTime = Number(e.target.value);
+  const handleSeek = (value: number[]) => {
+    const seekToTime = value[0];
     if (player) {
       player.seekTo(seekToTime, true);
       setCurrentTime(seekToTime);
@@ -143,47 +146,45 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onEnd }) => {
   };
 
   return (
-    <section className="flex xss:flex-col xs:flex-row items-center p-4 mt-8 gap-8 bg-slate-600 rounded-2xl">
+    <Card className="flex xss:flex-col xs:flex-row items-center p-4 mt-8 gap-8">
       <div id="player" ref={playerRef} className="absolute"></div>
       <img
         src={thumbnailUrl}
         alt="Video Thumbnail"
-        className="w-full max-w-[120px] xss:m-0 xs:mb-2 rounded-lg"
+        className="w-full max-w-[120px] xss:m-0 xs:mb-2 rounded-lg border"
       />
 
       <div>
-        <div className="flex items-center">
-          <button className="pr-4" onClick={handlePlayPause}>
+        <CardContent className="flex items-start gap-2 p-0 my-2 w-60">
+          <Button className="pr-4" onClick={handlePlayPause}>
             {isPlaying ? "Pause" : "Play"}
-          </button>
-          <button onClick={handleStop}>Stop</button>
-        </div>
-        <div>
-          <div>Volume: {volume}%</div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={volume}
-            onChange={handleVolumeChange}
+          </Button>
+          <Button onClick={handleStop}>Stop</Button>
+        </CardContent>
+        <div className="flex flex-col gap-2 my-2">
+          <CardTitle>Volume: {volume}%</CardTitle>
+          <Slider
+            value={[volume]}
+            onValueChange={handleVolumeChange}
+            max={100}
+            min={0}
             className="w-full"
           />
         </div>
-        <div>
-          <div>
+        <div className="flex flex-col gap-2 my-2">
+          <CardTitle>
             {Math.floor(currentTime)} / {Math.floor(duration)} seconds
-          </div>
-          <input
-            type="range"
-            min="0"
+          </CardTitle>
+          <Slider
+            value={[currentTime]}
+            onValueChange={handleSeek}
             max={duration}
-            value={currentTime}
-            onChange={handleSeek}
+            min={0}
             className="w-full"
           />
         </div>
       </div>
-    </section>
+    </Card >
   );
 };
 
