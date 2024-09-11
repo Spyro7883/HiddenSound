@@ -10,7 +10,7 @@ interface YouTubeSearchProps {
 }
 
 const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
-    const [query, setQuery] = useState<string>('');
+    const [inputValue, setInputValue] = useState<string>('');
     const [results, setResults] = useState<Array<{ id: string, title: string }>>([]);
     const [playlists, setPlaylists] = useState<Array<{ id: string, name: string }>>([]);
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
@@ -45,7 +45,7 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
 
         try {
             const response = await fetch(
-                `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&key=${apiKey}`
+                `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(inputValue)}&key=${apiKey}`
             );
             const data = await response.json();
 
@@ -57,11 +57,12 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
             setResults(videos);
         } catch (error) {
             console.error('Error fetching YouTube videos:', error);
+            setResults([]);
         }
     };
 
     const handleSearch = () => {
-        if (query.trim()) {
+        if (inputValue.trim()) {
             searchYouTube();
         }
     };
@@ -69,6 +70,11 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
     const handleVideoSelect = (videoId: string) => {
         setSelectedVideoId(videoId);
         onVideoSelect(videoId);
+        setResults([]);
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(e.target.value);
         setResults([]);
     };
 
@@ -89,7 +95,7 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
 
             if (response.ok) {
                 alert('Song added to playlist successfully');
-                setSelectedVideoId(null); // Clear the selection
+                setSelectedVideoId(null);
             } else {
                 const errorData = await response.json();
                 alert(errorData.error || 'Failed to add song to playlist');
@@ -125,38 +131,38 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
         <div className="xss:flex xss:flex-col xs:block">
             <Input
                 type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                value={inputValue}
+                onChange={handleInputChange}
                 placeholder="Search"
                 className="xss:w-full xs:w-3/5 xss:block xss:mx-auto xss:mb-2 xs:inline xs:mr-2 xs:mb-0 p-2 mr-2"
             />
             <Button
                 onClick={handleSearch}
-                // className="xss:w-3/5 xss:min-w-30 xs:min-w-0 xs:w-auto px-5 py-2 mx-auto text-base rounded border-none"
                 className="px-5 py-2 mx-auto"
             >
                 Search
             </Button>
+            {results.length > 0 && (
+                <div>
 
-            <div>
+                    {results.map((video) => (
+                        <Card key={video.id} className="my-2">
+                            <CardContent className="p-4 hover:bg-accent cursor-pointer"
+                                onClick={() => handleVideoSelect(video.id)}
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        handleVideoSelect(video.id);
+                                    }
+                                }}
+                                aria-label={`Select video: ${video.title}`}>
+                                <CardTitle className="font-normal">{video.title}</CardTitle>
+                            </CardContent>
+                        </Card>
+                    ))}
 
-                {results.map((video) => (
-                    <Card key={video.id} className="my-2">
-                        <CardContent className="p-4 hover:bg-accent cursor-pointer"
-                            onClick={() => handleVideoSelect(video.id)}
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                    handleVideoSelect(video.id);
-                                }
-                            }}
-                            aria-label={`Select video: ${video.title}`}>
-                            <CardTitle className="font-normal">{video.title}</CardTitle>
-                        </CardContent>
-                    </Card>
-                ))}
-
-            </div>
+                </div>
+            )}
             {selectedVideoId && playlists.length > 0 && (
                 <div className="mt-4 xss:flex xss:flex-col xss:gap-2 xss:text-center xs:block xs:text-start">
                     <h3>Select a Playlist:</h3>

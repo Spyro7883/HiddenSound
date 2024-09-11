@@ -44,9 +44,11 @@ export default function Home() {
 
   const handleVideoSelect = (id: string) => {
     setVideoId(id);
+    setSelectedPlaylistId(null);
   };
   const handlePlaylistSelect = (playlistId: string) => {
     setSelectedPlaylistId(playlistId);
+    setVideoId(null);
   };
 
   return (
