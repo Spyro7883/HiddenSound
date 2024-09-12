@@ -9,6 +9,7 @@ import YouTubePlaylist from '@/components/YoutubePlaylist';
 import { useState, useEffect } from "react"
 import { useSession } from 'next-auth/react';
 import { useAuth } from '../context/AuthContext';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 export default function Home() {
   const [showRegisterPopup, setShowRegisterPopup] = useState(false);
@@ -59,13 +60,31 @@ export default function Home() {
         setShowLoginPopup={setShowLoginPopup}></Navbar>
       <main className={`flex flex-col h-90svh items-center gap-8 ${(session || isLoggedIn) ? "justify-between" : "justify-center"} p-8`}>
         {!(session || isLoggedIn) ? (
+
           <div className="flex flex-col justify-center">
-            {showRegisterPopup && (
-              <RegisterPopup onClose={() => setShowRegisterPopup(false)} />
-            )}
-            {showLoginPopup && (
-              <LoginPopup onClose={() => setShowLoginPopup(false)} />
-            )}
+
+            <Popover
+              open={showRegisterPopup}
+            >
+              <PopoverTrigger asChild>
+                <div />
+              </PopoverTrigger>
+
+              <PopoverContent>
+                <RegisterPopup onClose={() => setShowRegisterPopup(false)} />
+              </PopoverContent>
+
+            </Popover>
+            <Popover
+              open={showLoginPopup}
+            >
+              <PopoverTrigger asChild>
+                <div />
+              </PopoverTrigger>
+              <PopoverContent>
+                <LoginPopup onClose={() => setShowLoginPopup(false)} />
+              </PopoverContent>
+            </Popover>
           </div>
         ) : (
           <div>
@@ -83,17 +102,20 @@ export default function Home() {
               </ul>
             </div>
           </div>
-        )}
-        {session || isLoggedIn ? (
-          selectedPlaylistId ? (
-            <YouTubePlaylist playlistId={selectedPlaylistId} />
+        )
+        }
+        {
+          session || isLoggedIn ? (
+            selectedPlaylistId ? (
+              <YouTubePlaylist playlistId={selectedPlaylistId} />
+            ) : (
+              videoId && <YouTubePlayer videoId={videoId} />
+            )
           ) : (
-            videoId && <YouTubePlayer videoId={videoId} />
+            <p className='d-flex justify-center text-center'>Please log in to use our hidden music player.</p>
           )
-        ) : (
-          <p className='d-flex justify-center text-center'>Please log in to use our hidden music player.</p>
-        )}
-      </main>
-    </div>
+        }
+      </main >
+    </div >
   )
 }

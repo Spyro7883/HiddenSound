@@ -4,6 +4,13 @@ import PlaylistModal from './PlaylistModal';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
 
 interface YouTubeSearchProps {
     onVideoSelect: (videoId: string) => void;
@@ -166,44 +173,60 @@ const YouTubeSearch: React.FC<YouTubeSearchProps> = ({ onVideoSelect }) => {
             {selectedVideoId && playlists.length > 0 && (
                 <div className="mt-4 xss:flex xss:flex-col xss:gap-2 xss:text-center xs:block xs:text-start">
                     <h3>Select a Playlist:</h3>
-                    <select
-                        value={selectedPlaylistId || ''}
-                        onChange={(e) => setSelectedPlaylistId(e.target.value)}
-                        className="p-2 bg-gray-700 text-white rounded-md"
-                    >
-                        <option value="" disabled>Select a playlist</option>
-                        {playlists.map((playlist) => (
-                            <option key={playlist.id} value={playlist.id}>
-                                {playlist.name}
-                            </option>
-                        ))}
-                    </select>
-                    <button
+
+                    <DropdownMenu >
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className='xss:mr-0 xs:mr-2'>
+                                {selectedPlaylistId
+                                    ? playlists.find((playlist) => playlist.id === selectedPlaylistId)?.name
+                                    : "Select a Playlist"}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {playlists.map((playlist) => (
+                                <DropdownMenuItem
+                                    key={playlist.id}
+                                    onClick={() => setSelectedPlaylistId(playlist.id)}
+                                >
+                                    {playlist.name}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button
                         onClick={handleAddToPlaylist}
-                        className="xss:ml-0 xs:ml-2 bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded"
+                        className="xss:mr-0 xs:mr-2 mt-2 bg-green-500 hover:bg-green-700 py-2 px-4"
                     >
                         Add to Playlist
-                    </button>
+                    </Button>
                     {selectedPlaylistId && selectedVideoId && (
-                        <button
+                        <Button
                             onClick={() => removeSongFromPlaylist(selectedPlaylistId, selectedVideoId)}
-                            className="ml-2 bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded"
+                            className="xss:mr-0 xs:mr-2 mt-2 bg-red-500 hover:bg-red-700 py-2 px-4"
                         >
                             Remove Song
-                        </button>
+                        </Button>
                     )}
 
 
                 </div>
             )}
 
-            <Button className='mt-4' onClick={() => setShowPlaylistModal(true)}>
-                Pick a playlist
-            </Button>
 
-            {showPlaylistModal && userId && (
-                <PlaylistModal userId={userId} onClose={() => setShowPlaylistModal(false)} />
-            )}
+            <Popover
+                open={showPlaylistModal}
+                onOpenChange={setShowPlaylistModal}>
+                <PopoverTrigger asChild>
+                    <Button className="mt-4" onClick={() => setShowPlaylistModal(true)}>
+                        Pick a playlist
+                    </Button>
+                </PopoverTrigger>
+                {userId && (
+                    <PopoverContent>
+                        <PlaylistModal userId={userId} onClose={() => setShowPlaylistModal(false)} />
+                    </PopoverContent>
+                )}
+            </Popover>
         </div>
     );
 };

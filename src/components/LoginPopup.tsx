@@ -1,20 +1,45 @@
 "use client"
 import React from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useAuth } from '../context/AuthContext';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
 
-type FormRegisterSchema = {
-    email: string
-    password: string
-}
+// Zod schema for login form validation
+const loginSchema = z.object({
+    email: z.string().email({
+        message: "Please enter a valid email address",
+    }),
+    password: z.string().min(6, {
+        message: "Password must be at least 6 characters long",
+    }),
+});
+
+type FormRegisterSchema = z.infer<typeof loginSchema>;
 
 interface LoginPopupProps {
     onClose: () => void;
 }
 
 const LoginPopup: React.FC<LoginPopupProps> = ({ onClose }) => {
-    const { register, handleSubmit } = useForm<FormRegisterSchema>()
     const { login } = useAuth();
+    const form = useForm<FormRegisterSchema>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: "",  // Set initial values to empty strings or any default values
+            password: "",
+        },
+    });
 
     const onSubmit: SubmitHandler<FormRegisterSchema> = async (data) => {
         try {
@@ -41,27 +66,51 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <section className="relative flex flex-col space-evenly w-96 min-w-48 h-48 border-2 rounded-lg bg-white pb-2 pt-2 m-8 inset-0">
-                <button onClick={onClose} className="absolute top-2 right-2">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 text-black"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <h1 className="flex justify-center pb-2 text-black">User Login</h1>
-                <form method="post" className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-                    <input className="bg-transparent outline-none text-black px-6" type="email" placeholder="Email" {...register("email")} />
-                    <input className="bg-transparent outline-none text-black px-6" type="password" placeholder="Password" {...register("password")} />
-                    <button className="text-black m-4" type="submit">Submit</button>
+        < section >
+            <button onClick={onClose} className="absolute top-2 right-2">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h1 className="flex justify-center pb-2">User Login</h1>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input type="email" placeholder="Email" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input type="password" placeholder="Password" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Button className="mx-0" type="submit">Submit</Button>
                 </form>
-            </section>
-        </div>
+            </Form>
+        </section >
     );
 };
 

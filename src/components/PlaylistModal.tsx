@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface PlaylistModalProps {
     onClose: () => void;
@@ -63,7 +65,6 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({ onClose, userId }) => {
             });
 
             if (response.ok) {
-                // Remove the deleted playlist from the state
                 setPlaylists(playlists.filter((playlist) => playlist.id !== id));
                 console.log('Playlist deleted successfully');
             } else {
@@ -76,53 +77,52 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({ onClose, userId }) => {
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <section className="relative flex flex-col space-evenly w-96 h-48 rounded-lg bg-slate-700 p-4 m-8 inset-0">
-                <h2>Add New Playlist</h2>
-                <input
-                    type="text"
-                    placeholder="Enter playlist name"
-                    value={playlistName}
-                    onChange={(e) => setPlaylistName(e.target.value)}
-                    className="mt-2 p-2 w-full bg-gray-700 text-white rounded-md"
-                />
-                <button
-                    onClick={createPlaylist}
-                    className="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+        <section>
+            <h2>Add New Playlist</h2>
+            <Input
+                type="text"
+                placeholder="Enter playlist name"
+                value={playlistName}
+                onChange={(e) => setPlaylistName(e.target.value)}
+                className="mt-2 p-2 w-full"
+            />
+            <Button
+                onClick={createPlaylist}
+                className="mt-4 py-2 px-4"
+            >
+                Create Playlist
+            </Button>
+
+            <div className="mt-4">
+                <h3>Your Playlists:</h3>
+                <ul>
+                    {playlists.map((playlist) => (
+                        <li key={playlist.id} className="mt-2 p-2 flex justify-between">
+                            <p className='flex items-center'>{playlist.name}</p>
+                            <Button
+                                onClick={() => deletePlaylist(playlist.id)}
+                                className="bg-red-500 hover:bg-red-700"
+                            >
+                                Delete
+                            </Button>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <button onClick={onClose} className="absolute top-3 right-3">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                 >
-                    Create Playlist
-                </button>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </section>
 
-                <div className="mt-4">
-                    <h3>Your Playlists:</h3>
-                    <ul>
-                        {playlists.map((playlist) => (
-                            <li key={playlist.id} className="mt-2 p-2 bg-gray-600 rounded flex justify-between">
-                                <p>{playlist.name}</p>
-                                <button
-                                    onClick={() => deletePlaylist(playlist.id)}
-                                    className="text-red-500 hover:text-red-700"
-                                >
-                                    Delete
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                <button onClick={onClose} className="absolute top-4 right-4">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 text-black"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </section>
-        </div>
     );
 };
 
