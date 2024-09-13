@@ -9,7 +9,7 @@ import YouTubePlaylist from '@/components/YoutubePlaylist';
 import { useState, useEffect } from "react"
 import { useSession } from 'next-auth/react';
 import { useAuth } from '../context/AuthContext';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export default function Home() {
   const [showRegisterPopup, setShowRegisterPopup] = useState(false);
@@ -63,28 +63,42 @@ export default function Home() {
 
           <div className="flex flex-col justify-center">
 
-            <Popover
+            <Dialog
               open={showRegisterPopup}
+              onOpenChange={setShowRegisterPopup}
             >
-              <PopoverTrigger asChild>
+              <DialogTrigger asChild>
                 <div />
-              </PopoverTrigger>
+              </DialogTrigger>
 
-              <PopoverContent>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>User Registration</DialogTitle>
+                  <DialogDescription>
+                    Create an account
+                  </DialogDescription>
+                </DialogHeader>
                 <RegisterPopup onClose={() => setShowRegisterPopup(false)} />
-              </PopoverContent>
+              </DialogContent>
 
-            </Popover>
-            <Popover
+            </Dialog>
+            <Dialog
               open={showLoginPopup}
+              onOpenChange={setShowLoginPopup}
             >
-              <PopoverTrigger asChild>
+              <DialogTrigger asChild>
                 <div />
-              </PopoverTrigger>
-              <PopoverContent>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>User Login</DialogTitle>
+                  <DialogDescription>
+                    Log through your own account
+                  </DialogDescription>
+                </DialogHeader>
                 <LoginPopup onClose={() => setShowLoginPopup(false)} />
-              </PopoverContent>
-            </Popover>
+              </DialogContent>
+            </Dialog>
           </div>
         ) : (
           <div>

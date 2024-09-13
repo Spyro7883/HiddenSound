@@ -64,19 +64,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
     };
 
     return (
-        <section className="">
-            <button onClick={onClose} className="absolute top-2 right-2">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h1 className="flex justify-center pb-2">User Registration</h1>
+        <section>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <FormField
@@ -118,7 +106,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
                             </FormItem>
                         )}
                     />
-                    <Button className="pt-2" type="submit">Submit</Button>
+                    <Button type="submit">Submit</Button>
                 </form>
             </Form>
         </section>
